@@ -1,0 +1,107 @@
+<html>
+  <head>
+    <title>PiWebCam</title>
+    <style type="text/css">
+    html {
+    	font-family: monospace;
+    	margin: auto;
+    	max-width: 80ch;
+      padding: 2ch;
+    	color: #333;
+    	font-size: 1.2em;
+    }
+    a {
+    	color: #111;
+      font-weight: bold;
+    }
+    a:hover {
+    	color: #666;
+    }
+		img#image {
+			border: 0px none;
+      border-radius: 2px;
+			width: 100%;
+		}
+    nav ul {
+      margin: 10px 0;
+      padding: 0 10px;
+      text-align: center;
+    }
+    nav ul li {
+      display: inline-block;
+    }
+    </style>
+  </head>
+
+  <body>
+    <h1>PiWebCam</h1>
+    <p style="text-align: center">
+      <img src="" id="image" />
+    </p>
+    <nav>
+      <ul>
+        <li><span id="date"></span></li>
+      </ul>
+      <ul>
+        <li><input type="button" id="nav-prev" value="Prev" /></li>
+        <li><input type="button" id="nav-current" value="Current" /></li>
+        <li><input type="button" id="nav-next" value="Next" /><li>
+      </ul>
+    </nav>
+  </body>
+
+  <script>
+    window.addEventListener("DOMContentLoaded", e => {
+      const ATTR = "attr-index";
+      let img = document.getElementById("image");
+      let ts = document.getElementById("date");
+      let loadImage = (d) => {
+        img.src = d.name;
+        ts.innerText = new Date(d.modtime);
+      };
+      let init = (data) => {
+
+        let onClick = (e) => {
+          e.preventDefault();
+          let idx = Number(e.target.getAttribute(ATTR));
+          if (idx < 0 || idx > 99) {
+            window.alert("No more images");
+            return;
+          };
+          loadImage(data[idx]);
+        };
+
+        let prev = document.getElementById("nav-prev");
+        prev.setAttribute(ATTR, 1);
+        prev.addEventListener("click", (e) => {
+          onClick(e);
+          prev.setAttribute(ATTR, Number(prev.getAttribute(ATTR)) + 1);
+          next.setAttribute(ATTR, Number(next.getAttribute(ATTR)) + 1);
+        });
+
+        let current = document.getElementById("nav-current");
+        current.setAttribute(ATTR, 0);
+        current.addEventListener("click", (e) => {
+          onClick(e);
+          prev.setAttribute(ATTR, 1);
+          next.setAttribute(ATTR, -1);
+        });
+
+        let next = document.getElementById("nav-next");
+        next.setAttribute(ATTR, -1);
+        next.addEventListener("click", (e) => {
+          onClick(e);
+          next.setAttribute(ATTR, Number(next.getAttribute(ATTR)) - 1);
+          prev.setAttribute(ATTR, Number(prev.getAttribute(ATTR)) - 1);
+        });
+
+        loadImage(data[0]);
+      };
+
+      fetch("/images.json")
+        .then(response => response.json())
+        .then(init);
+    })
+  </script>
+
+<html>
