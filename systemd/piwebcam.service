@@ -5,7 +5,7 @@ Documentation=https://github.com/chaudum/piwebcam
 [Service]
 User=pi
 WorkingDirectory=/home/pi/sandbox/piwebcam
-ExecStartPre=/usr/bin/go build /home/pi/sandbox/piwebcam/piwebcam.go
+#ExecStartPre=/usr/bin/go build /home/pi/sandbox/piwebcam/piwebcam.go
 ExecStart=/home/pi/sandbox/piwebcam/piwebcam -iso 200 -width 1280 -height 1024 -http.root /home/pi/sandbox/piwebcam -http.port 8765
 Restart=on-failure
 RestartSec=60
