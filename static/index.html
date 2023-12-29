@@ -98,7 +98,7 @@
         loadImage(data[0]);
       };
 
-      fetch("/images.json")
+      fetch("images.json")
         .then(response => response.json())
         .then(init);
     })
